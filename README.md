@@ -9,7 +9,7 @@ javalin-test  is a tool that will launch a short-lived javalin server in your te
 
 javalin-test is available via Jitpack.  Click the badge for instructions on adding it to your project.
 
-[![](https://jitpack.io/v/com.gitlab.aohara/javalin-test.svg)](https://jitpack.io/#com.gitlab.aohara/javalin-test)
+[![](https://jitpack.io/v/javalin/javalin-test.svg)](https://jitpack.io/#javalin/javalin-test)
 
 Javalin 3 or greater is required.
 
