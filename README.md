@@ -24,9 +24,10 @@ class KotlinTest {
         JavalinTest.test { app, client ->
             app.get("/") { it.result("javalin") }
 
-            val resp = client.get("/")
-            Assert.assertThat(resp.status, CoreMatchers.equalTo(200))
-            Assert.assertThat(resp.body, CoreMatchers.equalTo("javalin"))
+            client.get("/").use { resp ->
+                Assert.assertThat(resp.code, CoreMatchers.equalTo(200))
+                Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("javalin"))
+            }
         }
     }
 }
@@ -40,10 +41,10 @@ public class JavaTest {
    public void get() {
        JavalinTest.test((app, http) -> {
            app.get("/", ctx -> ctx.result("javalin"));
-
-           final HttpResponse<String> resp = http.get("/");
-           Assert.assertThat(resp.getStatus(), CoreMatchers.equalTo(200));
-           Assert.assertThat(resp.getBody(), CoreMatchers.equalTo("javalin"));
+           
+           final Response resp = http.get("/");
+           Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
+           Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("javalin"));
        });
    }
 }
