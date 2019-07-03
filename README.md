@@ -4,8 +4,7 @@ Utility to write Acceptance Tests for the [Javalin](https://github.com/tipsy/jav
 
 This tool is used in your tests to launch a short-lived Javalin server, with which you can add your request handlers and run your tests.  An http client wrapper is included, but you are free to use whatever client you like.  
 
-[![pipeline status](https://gitlab.com/aohara/javalin-test/badges/master/pipeline.svg)](https://gitlab.com/aohara/javalin-test/commits/master)
-[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Install
 
