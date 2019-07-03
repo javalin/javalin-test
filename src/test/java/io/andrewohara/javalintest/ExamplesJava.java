@@ -23,10 +23,10 @@ public class ExamplesJava {
 
     @Test
     public void get() {
-        JavalinTest.test((app, http) -> {
+        JavalinTest.test((app, client) -> {
             app.get("/", ctx -> ctx.result("javalin"));
 
-            final Response resp = http.get("/");
+            final Response resp = client.get("/");
             Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
             Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("javalin"));
         });
@@ -34,10 +34,10 @@ public class ExamplesJava {
 
     @Test
     public void post_withJsonBody() {
-        JavalinTest.test((app, http) -> {
+        JavalinTest.test((app, client) -> {
             app.post("/", ctx -> ctx.result(ctx.body()));
 
-            final Response resp = http.postJson("/", JSON_BODY);
+            final Response resp = client.postJson("/", JSON_BODY);
             Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
             Assert.assertThat(resp.body().string(), CoreMatchers.equalTo(JSON_BODY));
         });
@@ -45,18 +45,18 @@ public class ExamplesJava {
 
     @Test
     public void request_custom() {
-        JavalinTest.test((app, http) -> {
+        JavalinTest.test((app, client) -> {
             app.post("/", ctx -> {
                 final String result = ctx.header("FOO") + "-" + ctx.body();
                 ctx.result(result);
             });
 
-            final Request request = http.request("/")
+            final Request request = client.request("/")
                     .post(RequestBody.create("bar", MediaType.get("text/plain")))
                     .addHeader("FOO", "foo")
                     .build();
 
-            final Response resp = http.execute(request);
+            final Response resp = client.execute(request);
             Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
             Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("foo-bar"));
         });

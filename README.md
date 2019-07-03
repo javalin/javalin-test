@@ -39,10 +39,10 @@ With Java:
 public class JavaTest {
    @Test
    public void get() {
-       JavalinTest.test((app, http) -> {
+       JavalinTest.test((app, client) -> {
            app.get("/", ctx -> ctx.result("javalin"));
            
-           final Response resp = http.get("/");
+           final Response resp = client.get("/");
            Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
            Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("javalin"));
        });
