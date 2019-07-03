@@ -2,7 +2,7 @@
 
 # Javalin Test - An Acceptance Testing tool for the Javalin Web Framework
 
-javalin-test  is a tool that will launch a short-lived javalin server in your tests.  From here, you can register your request handlers, and use the built-in http client to test your request handlers.
+javalin-test  is a tool that will launch a short-lived javalin server in your tests.  From here, you can register your request handlers and use the built-in http client to test them.
 
 
 ## Install
@@ -20,10 +20,15 @@ With Kotlin:
 class KotlinTest {
     @Test
     fun get() {
+        // Start a javalin server
         JavalinTest.test { app, client ->
+            // Register a request handler
             app.get("/") { it.result("javalin") }
 
+            // Call with the built-in http client
             client.get("/").use { resp ->
+            
+                // Test the response
                 Assert.assertThat(resp.code, CoreMatchers.equalTo(200))
                 Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("javalin"))
             }
@@ -38,10 +43,15 @@ With Java:
 public class JavaTest {
    @Test
    public void get() {
+       // Start a javalin server
        JavalinTest.test((app, client) -> {
+           // Register a request handler
            app.get("/", ctx -> ctx.result("javalin"));
            
+           // Call with the built-in http client
            final Response resp = client.get("/");
+           
+           // Test the response
            Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
            Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("javalin"));
        });
