@@ -1,12 +1,13 @@
 package io.andrewohara.javalintest
 
-import com.mashape.unirest.http.HttpMethod
-import com.mashape.unirest.http.Unirest
-import com.mashape.unirest.request.HttpRequestWithBody
 import io.javalin.Javalin
-import io.javalin.core.util.Header
-import org.apache.http.impl.client.HttpClients
-import java.util.function.BiConsumer
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import java.net.URL
 
 class JavalinTest {
 
@@ -20,12 +21,12 @@ class JavalinTest {
         val client = Client(app.port())
 
         consumer(app, client)
-        client.call(HttpMethod.DELETE, "/x-test-cookie-cleaner")
+        client.delete("/x-test-cookie-cleaner")
         app.stop()
     }
 
-    fun run(consumer: BiConsumer<Javalin, Client>) {
-        run { app, client -> consumer.accept(app, client) }
+    fun run(consumer: ThrowingBiConsumer<Javalin, Client>) {
+        run { app, client -> consumer.acceptThrows(app, client) }
     }
 
     companion object {
@@ -34,27 +35,55 @@ class JavalinTest {
         }
 
         @JvmStatic
-        fun test(consumer: BiConsumer<Javalin, Client>) {
+        fun test(consumer: ThrowingBiConsumer<Javalin, Client>) {
             JavalinTest().run(consumer)
         }
     }
+}
 
-    class Client(port: Int) {
+class Client(private val port: Int) {
 
-        private val origin = "http://localhost:$port"
+    private val client = OkHttpClient.Builder().build()
 
-        fun enableUnirestRedirects() = Unirest.setHttpClient(HttpClients.custom().build())
-        fun disableUnirestRedirects() = Unirest.setHttpClient(HttpClients.custom().disableRedirectHandling().build())
+    fun getUrl(path: String, queryParams: Map<String, String> = emptyMap()): URL {
+        return HttpUrl.Builder().apply {
+            scheme("http")
+            host("localhost")
+            port(port)
+            addPathSegments(path.trimStart('/'))
+            queryParams.forEach { addQueryParameter(it.key, it.value) }
+        }.build().toUrl()
+    }
 
-        // Unirest
+    @JvmOverloads
+    fun request(path: String, queryParams: Map<String, String> = emptyMap()): Request.Builder {
+        val url = getUrl(path, queryParams)
+        return Request.Builder().url(url)
+    }
 
-        fun get(path: String) = Unirest.get(origin + path).asString()
-        fun getBody(path: String) = Unirest.get(origin + path).asString().body
-        fun post(path: String) = Unirest.post(origin + path)
-        fun call(method: HttpMethod, pathname: String) = HttpRequestWithBody(method, origin + pathname).asString()
-        fun htmlGet(path: String) = Unirest.get(origin + path).header(Header.ACCEPT, "text/html").asString()
-        fun jsonGet(path: String) = Unirest.get(origin + path).header(Header.ACCEPT, "application/json").asString()
-        fun sse(path: String) = Unirest.get(origin + path).header("Accept", "text/event-stream").header("Connection", "keep-alive").header("Cache-Control", "no-cache").asStringAsync()
+    fun execute(request: Request): Response = client.newCall(request).execute()
+    fun execute(request: Request.Builder): Response = execute(request.build())
+
+    @JvmOverloads
+    fun get(path: String, queryParams: Map<String, String> = emptyMap()) = execute(request(path, queryParams).get())
+    fun delete(path: String) = execute(request(path).delete("".toRequestBody()))
+
+    fun postJson(path: String, body: String): Response {
+        val request = request(path)
+            .post(body.toRequestBody(JSON_TYPE))
+
+        return execute(request)
+    }
+
+    fun putJson(path: String, body: String): Response {
+        val request = request(path)
+            .put(body.toRequestBody(JSON_TYPE))
+
+        return execute(request)
+    }
+
+    companion object {
+        val JSON_TYPE = "application/json".toMediaType()
     }
 }
 
