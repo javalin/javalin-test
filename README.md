@@ -1,10 +1,9 @@
-# Javalin Testing Client
-
-Utility to write Acceptance Tests for the [Javalin](https://github.com/tipsy/javalin) Web Framework.
-
-This tool is used in your tests to launch a short-lived Javalin server, with which you can add your request handlers and run your tests.  An http client wrapper is included, but you are free to use whatever client you like.  
-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+# Javalin Test - An Acceptance Testing tool for the Javalin Web Framework
+
+javalin-test  is a tool that will launch a short-lived javalin server in your tests.  From here, you can register your request handlers, and use the built-in http client to test your request handlers.
+
 
 ## Install
 
