@@ -1,4 +1,4 @@
-package io.andrewohara.javalintest
+package io.javalin.test
 
 import org.hamcrest.CoreMatchers
 import org.junit.Assert

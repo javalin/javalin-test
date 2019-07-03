@@ -1,4 +1,4 @@
-package io.andrewohara.javalintest
+package io.javalin.test
 
 import io.javalin.Javalin
 import okhttp3.HttpUrl
