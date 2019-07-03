@@ -60,5 +60,5 @@ public class JavaTest {
 
 ```
 
-See more examples in [Kotlin](https://github.com/javalin/javalin-test/blob/master/src/test/kotlin/io/andrewohara/javalintest/ExamplesKotlin.kt) and [Java](https://github.com/javalin/javalin-test/blob/master/src/test/java/io/andrewohara/javalintest/ExamplesJava.java).
+See more examples in [Kotlin](https://github.com/javalin/javalin-test/blob/master/src/test/kotlin/io/javalin/test/ExamplesKotlin.kt) and [Java](https://github.com/javalin/javalin-test/blob/master/src/test/java/io/javalin/test/ExamplesJava.java).
 
