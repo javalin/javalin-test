@@ -3,7 +3,7 @@
 
 # Javalin Test - An Acceptance Testing tool for the Javalin Web Framework
 
-javalin-test  is a tool that will launch a short-lived javalin server in your tests.  From here, you can register your request handlers and use the built-in http client to test them.
+javalin-test is a tool that will launch a short-lived [javalin](https://github.com/tipsy/javalin) server in your tests.  From here, you can register your request handlers and use the built-in http client to test them.
 
 
 ## Install
