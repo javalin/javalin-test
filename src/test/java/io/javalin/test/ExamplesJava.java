@@ -4,20 +4,21 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class ExamplesJava {
+import java.util.Collections;
+import java.util.Map;
 
-    private static final String JSON_BODY = "{ \"name\": \"javalin\" }";
+public class ExamplesJava {
 
     @Test
     public void get_404() {
         final JavalinTest context = new JavalinTest();
         context.run((app, http) -> {
             final Response resp = http.get("/");
-            Assert.assertThat(resp.code(), CoreMatchers.equalTo(404));
+            assertThat(resp.code(), equalTo(404));
         });
     }
 
@@ -27,8 +28,8 @@ public class ExamplesJava {
             app.get("/", ctx -> ctx.result("javalin"));
 
             final Response resp = client.get("/");
-            Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
-            Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("javalin"));
+            assertThat(resp.code(), equalTo(200));
+            assertThat(resp.body().string(), equalTo("javalin"));
         });
     }
 
@@ -37,9 +38,10 @@ public class ExamplesJava {
         JavalinTest.test((app, client) -> {
             app.post("/", ctx -> ctx.result(ctx.body()));
 
-            final Response resp = client.postJson("/", JSON_BODY);
-            Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
-            Assert.assertThat(resp.body().string(), CoreMatchers.equalTo(JSON_BODY));
+            final Map<String, String> requestJson = Collections.singletonMap("name", "javalin");
+            final Response resp = client.postJson("/", requestJson);
+            assertThat(resp.code(), equalTo(200));
+            assertThat(resp.body().string(), equalTo("{\"name\":\"javalin\"}"));
         });
     }
 
@@ -57,8 +59,8 @@ public class ExamplesJava {
                     .build();
 
             final Response resp = client.execute(request);
-            Assert.assertThat(resp.code(), CoreMatchers.equalTo(200));
-            Assert.assertThat(resp.body().string(), CoreMatchers.equalTo("foo-bar"));
+            assertThat(resp.code(), equalTo(200));
+            assertThat(resp.body().string(), equalTo("foo-bar"));
         });
     }
 }

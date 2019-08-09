@@ -46,9 +46,10 @@ class ExamplesKotlin {
         JavalinTest.test { app, client ->
             app.post("/") { it.result(it.body()) }
 
-            client.postJson("/", "{ \"name\": \"javalin\" }").use { resp ->
+            val requestJson = mapOf("name" to "javalin")
+            client.postJson("/", requestJson).use { resp ->
                 Assert.assertThat(resp.code, CoreMatchers.equalTo(200))
-                Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("{ \"name\": \"javalin\" }"))
+                Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("{\"name\":\"javalin\"}"))
             }
         }
     }
@@ -58,9 +59,10 @@ class ExamplesKotlin {
         JavalinTest.test { app, client ->
             app.put("/") { it.result(it.body()) }
 
-            client.putJson("/", "{ \"name\": \"javalin\" }").use { resp ->
+            val requestJson = mapOf("name" to "javalin")
+            client.putJson("/", requestJson).use { resp ->
                 Assert.assertThat(resp.code, CoreMatchers.equalTo(200))
-                Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("{ \"name\": \"javalin\" }"))
+                Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("{\"name\":\"javalin\"}"))
             }
         }
     }

@@ -1,6 +1,7 @@
 package io.javalin.test
 
 import io.javalin.Javalin
+import io.javalin.plugin.json.JavalinJson
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -68,16 +69,16 @@ class Client(private val port: Int) {
     fun get(path: String, queryParams: Map<String, String> = emptyMap()) = execute(request(path, queryParams).get())
     fun delete(path: String) = execute(request(path).delete("".toRequestBody()))
 
-    fun postJson(path: String, body: String): Response {
-        val request = request(path)
-            .post(body.toRequestBody(JSON_TYPE))
+    fun postJson(path: String, obj: Any): Response {
+        val body = JavalinJson.toJson(obj).toRequestBody(JSON_TYPE)
+        val request = request(path).post(body)
 
         return execute(request)
     }
 
-    fun putJson(path: String, body: String): Response {
-        val request = request(path)
-            .put(body.toRequestBody(JSON_TYPE))
+    fun putJson(path: String, obj: Any): Response {
+        val body = JavalinJson.toJson(obj).toRequestBody(JSON_TYPE)
+        val request = request(path).put(body)
 
         return execute(request)
     }
