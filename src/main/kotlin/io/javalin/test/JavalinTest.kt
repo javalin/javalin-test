@@ -2,10 +2,7 @@ package io.javalin.test
 
 import io.javalin.Javalin
 import io.javalin.plugin.json.JavalinJson
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import java.net.URL
@@ -69,22 +66,30 @@ class Client(private val port: Int) {
     fun get(path: String, queryParams: Map<String, String> = emptyMap()) = execute(request(path, queryParams).get())
     fun delete(path: String) = execute(request(path).delete("".toRequestBody()))
 
-    fun postJson(path: String, obj: Any): Response {
-        val body = JavalinJson.toJson(obj).toRequestBody(JSON_TYPE)
-        val request = request(path).post(body)
-
+    fun post(path: String, json: Any? = null): Response {
+        val request = request(path).post(json.toBody())
         return execute(request)
     }
 
-    fun putJson(path: String, obj: Any): Response {
-        val body = JavalinJson.toJson(obj).toRequestBody(JSON_TYPE)
-        val request = request(path).put(body)
+    fun put(path: String, json: Any? = null): Response {
+        val request = request(path).put(json.toBody())
+        return execute(request)
+    }
 
+    fun patch(path: String, json: Any? = null): Response {
+        val request = request(path).patch(json.toBody())
         return execute(request)
     }
 
     companion object {
-        val JSON_TYPE = "application/json".toMediaType()
+        private val JSON_TYPE = "application/json".toMediaType()
+        private fun Any?.toBody(): RequestBody{
+            return if (this == null) {
+                RequestBody.create(null, ByteArray(0), 0, 0)
+            } else {
+                JavalinJson.toJson(this).toRequestBody(JSON_TYPE)
+            }
+        }
     }
 }
 
