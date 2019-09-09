@@ -64,7 +64,11 @@ class Client(private val port: Int) {
 
     @JvmOverloads
     fun get(path: String, queryParams: Map<String, String> = emptyMap()) = execute(request(path, queryParams).get())
-    fun delete(path: String) = execute(request(path).delete("".toRequestBody()))
+
+    fun delete(path: String, json: Any? = null): Response {
+        val request = request(path).delete(json.toBody())
+        return execute(request)
+    }
 
     fun post(path: String, json: Any? = null): Response {
         val request = request(path).post(json.toBody())
