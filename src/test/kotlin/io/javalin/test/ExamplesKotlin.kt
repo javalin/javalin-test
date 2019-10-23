@@ -1,9 +1,11 @@
 package io.javalin.test
 
+import io.javalin.core.JavalinConfig
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.function.Consumer
 
 class ExamplesKotlin {
 
@@ -128,6 +130,21 @@ class ExamplesKotlin {
 
             val resp = url.openStream().reader().readText()
             Assert.assertThat(resp, CoreMatchers.equalTo("javalin"))
+        }
+    }
+
+    @Test
+    fun `custom app configuration`() {
+        val configurator = Consumer<JavalinConfig> { config ->
+            config.accessManager { _, ctx, _ -> ctx.status(401) }
+        }
+
+        JavalinTest(configurator).run { app, client ->
+            app.get("/") { it.result("javalin") }
+
+            client.get("/").use { resp ->
+                Assert.assertThat(resp.code, CoreMatchers.equalTo(401))
+            }
         }
     }
 }

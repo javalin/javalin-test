@@ -1,15 +1,17 @@
 package io.javalin.test
 
 import io.javalin.Javalin
+import io.javalin.core.JavalinConfig
 import io.javalin.plugin.json.JavalinJson
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import java.net.URL
+import java.util.function.Consumer
 
-class JavalinTest {
+class JavalinTest(configurator: Consumer<JavalinConfig> = Consumer {}) {
 
-    private val app = Javalin.create().apply {
+    private val app = Javalin.create(configurator).apply {
         delete("/x-test-cookie-cleaner") { ctx -> ctx.cookieMap().keys.forEach { ctx.removeCookie(it) } }
         config.showJavalinBanner = false
     }
