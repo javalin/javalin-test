@@ -9,7 +9,7 @@
 
     <groupId>io.javalin</groupId>
     <artifactId>javalin-test</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 
     <name>Javalin Test</name>
     <description>Utility to write Acceptance Tests for the Javalin Framework</description>
