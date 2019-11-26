@@ -56,34 +56,65 @@ class Client(private val port: Int) {
     }
 
     @JvmOverloads
-    fun request(path: String, queryParams: Map<String, String> = emptyMap()): Request.Builder {
+    fun request(path: String, queryParams: Map<String, String> = emptyMap(), headers: Map<String, String> = emptyMap()): Request.Builder {
         val url = getUrl(path, queryParams)
-        return Request.Builder().url(url)
+        return Request.Builder().apply {
+            url(url)
+            headers.forEach { (key, value) -> addHeader(key, value) }
+        }
     }
 
     fun execute(request: Request): Response = client.newCall(request).execute()
     fun execute(request: Request.Builder): Response = execute(request.build())
 
     @JvmOverloads
-    fun get(path: String, queryParams: Map<String, String> = emptyMap()) = execute(request(path, queryParams).get())
+    fun get(
+            path: String,
+            queryParams: Map<String, String> = emptyMap(),
+            headers: Map<String, String> = emptyMap()
+    ) = execute(request(path, queryParams, headers).get())
 
-    fun delete(path: String, json: Any? = null): Response {
-        val request = request(path).delete(json.toBody())
+    @JvmOverloads
+    fun delete(
+            path: String,
+            queryParams: Map<String, String> = emptyMap(),
+            headers: Map<String, String> = emptyMap(),
+            json: Any? = null
+    ): Response {
+        val request = request(path, queryParams, headers).delete(json.toBody())
         return execute(request)
     }
 
-    fun post(path: String, json: Any? = null): Response {
-        val request = request(path).post(json.toBody())
+    @JvmOverloads
+    fun post(
+            path: String,
+            queryParams: Map<String, String> = emptyMap(),
+            headers: Map<String, String> = emptyMap(),
+            json: Any? = null
+    ): Response {
+        val request = request(path, queryParams, headers).post(json.toBody())
         return execute(request)
     }
 
-    fun put(path: String, json: Any? = null): Response {
-        val request = request(path).put(json.toBody())
+    @JvmOverloads
+    fun put(
+            path: String,
+            queryParams: Map<String, String> = emptyMap(),
+            headers: Map<String, String> = emptyMap(),
+            json: Any? = null
+    ): Response {
+        val request = request(path, queryParams, headers).put(json.toBody())
         return execute(request)
     }
 
-    fun patch(path: String, json: Any? = null): Response {
-        val request = request(path).patch(json.toBody())
+    @JvmOverloads
+    fun patch(
+            path: String,
+            queryParams: Map<String, String> = emptyMap(),
+            headers: Map<String, String> = emptyMap(),
+            json: Any? = null
+    ): Response {
+        val request = request(path, queryParams, headers).patch(json.toBody())
         return execute(request)
     }
 

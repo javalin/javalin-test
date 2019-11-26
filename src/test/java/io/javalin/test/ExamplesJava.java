@@ -39,7 +39,7 @@ public class ExamplesJava {
             app.post("/", ctx -> ctx.result(ctx.body()));
 
             final Map<String, String> requestJson = Collections.singletonMap("name", "javalin");
-            final Response resp = client.post("/", requestJson);
+            final Response resp = client.post("/", Collections.emptyMap(), Collections.emptyMap(), requestJson);
             assertThat(resp.code(), equalTo(200));
             assertThat(resp.body().string(), equalTo("{\"name\":\"javalin\"}"));
         });
