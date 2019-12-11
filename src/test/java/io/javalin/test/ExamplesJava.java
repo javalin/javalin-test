@@ -15,8 +15,7 @@ public class ExamplesJava {
 
     @Test
     public void get_404() {
-        final JavalinTest context = new JavalinTest();
-        context.run((app, http) -> {
+        JavalinTest.test((app, http) -> {
             final Response resp = http.get("/");
             assertThat(resp.code(), equalTo(404));
         });
@@ -46,7 +45,7 @@ public class ExamplesJava {
     }
 
     @Test
-    public void request_custom() {
+    public void custom_http_client() {
         JavalinTest.test((app, client) -> {
             app.post("/", ctx -> {
                 final String result = ctx.header("FOO") + "-" + ctx.body();

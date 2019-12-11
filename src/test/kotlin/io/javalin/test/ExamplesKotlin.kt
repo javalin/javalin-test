@@ -1,18 +1,16 @@
 package io.javalin.test
 
-import io.javalin.core.JavalinConfig
+import io.javalin.Javalin
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.function.Consumer
 
 class ExamplesKotlin {
 
     @Test
     fun `get with no matching routes`() {
-        val context = JavalinTest()
-        context.run { _, http ->
+        JavalinTest.test { _, http ->
             http.get("/").use { resp ->
                 Assert.assertThat(resp.code, CoreMatchers.equalTo(404))
             }
@@ -134,14 +132,14 @@ class ExamplesKotlin {
     }
 
     @Test
-    fun `custom app configuration`() {
-        val configurator = Consumer<JavalinConfig> { config ->
+    fun `provide custom Javalin instance`() {
+        // create custom app with access manager that always throws 401
+        val app = Javalin.create { config ->
             config.accessManager { _, ctx, _ -> ctx.status(401) }
         }
+        app.get("/") { it.result("javalin") }
 
-        JavalinTest(configurator).run { app, client ->
-            app.get("/") { it.result("javalin") }
-
+        JavalinTest.test(app) { client ->
             client.get("/").use { resp ->
                 Assert.assertThat(resp.code, CoreMatchers.equalTo(401))
             }
