@@ -1,43 +1,56 @@
 package io.javalin.test
 
 import io.javalin.Javalin
-import io.javalin.core.JavalinConfig
 import io.javalin.plugin.json.JavalinJson
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import java.net.URL
-import java.util.function.Consumer
 
-class JavalinTest(configurator: Consumer<JavalinConfig> = Consumer {}) {
+object JavalinTest {
 
-    private val app = Javalin.create(configurator).apply {
+    private fun Javalin.init() {
         delete("/x-test-cookie-cleaner") { ctx -> ctx.cookieMap().keys.forEach { ctx.removeCookie(it) } }
         config.showJavalinBanner = false
+        start(0)
     }
 
-    fun run(consumer: (Javalin, Client) -> Unit) {
-        app.start(0)
+    private fun Client.clearCookies() = delete("/x-test-cookie-cleaner")
+
+    fun test(consumer: (Javalin, Client) -> Unit) {
+        val app = Javalin.create()
+        app.init()
+
         val client = Client(app.port())
-
         consumer(app, client)
-        client.delete("/x-test-cookie-cleaner")
-        app.stop()
+        client.clearCookies()
     }
 
-    fun run(consumer: ThrowingBiConsumer<Javalin, Client>) {
-        run { app, client -> consumer.acceptThrows(app, client) }
+    @JvmStatic
+    fun test(consumer: ThrowingBiConsumer<Javalin, Client>) {
+        val app = Javalin.create()
+        app.init()
+
+        val client = Client(app.port())
+        consumer.acceptThrows(app, client)
+        client.clearCookies()
     }
 
-    companion object {
-        fun test(consumer: (Javalin, Client) -> Unit) {
-            JavalinTest().run(consumer)
-        }
+    fun test(app: Javalin, consumer: (Client) -> Unit) {
+        app.init()
 
-        @JvmStatic
-        fun test(consumer: ThrowingBiConsumer<Javalin, Client>) {
-            JavalinTest().run(consumer)
-        }
+        val client = Client(app.port())
+        consumer(client)
+        client.clearCookies()
+    }
+
+    @JvmStatic
+    fun test(app: Javalin, consumer: ThrowingConsumer<Client>) {
+        app.init()
+
+        val client = Client(app.port())
+        consumer.acceptThrows(client)
+        client.clearCookies()
     }
 }
 
