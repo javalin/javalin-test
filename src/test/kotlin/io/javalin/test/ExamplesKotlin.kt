@@ -5,6 +5,7 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.function.Consumer
 
 class ExamplesKotlin {
 
@@ -153,6 +154,20 @@ class ExamplesKotlin {
 
             client.get("/", headers=mapOf("FOO" to "bar")).use { resp ->
                 Assert.assertThat(resp.body?.string(), CoreMatchers.equalTo("bar"))
+            }
+        }
+    }
+
+    @Test
+    fun `don't follow redirects`() {
+        Client.clientConfigurator = Consumer { it.followRedirects(false) }
+
+        JavalinTest.test { app, client ->
+            app.get("/") { it.redirect("http://foo.com") }
+
+            client.get("/").use { resp ->
+                Assert.assertThat(resp.code, CoreMatchers.equalTo(302))
+                Assert.assertThat(resp.headers["Location"], CoreMatchers.equalTo("http://foo.com"))
             }
         }
     }

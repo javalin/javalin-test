@@ -6,6 +6,7 @@ import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import java.net.URL
+import java.util.function.Consumer
 
 object JavalinTest {
 
@@ -56,7 +57,9 @@ object JavalinTest {
 
 class Client(private val port: Int) {
 
-    private val client = OkHttpClient.Builder().build()
+    private val client = OkHttpClient.Builder()
+            .apply { clientConfigurator.accept(this) }
+            .build()
 
     fun getUrl(path: String, queryParams: Map<String, String> = emptyMap()): URL {
         return HttpUrl.Builder().apply {
@@ -140,6 +143,8 @@ class Client(private val port: Int) {
                 JavalinJson.toJson(this).toRequestBody(JSON_TYPE)
             }
         }
+
+        var clientConfigurator: Consumer<OkHttpClient.Builder> = Consumer { }
     }
 }
 
